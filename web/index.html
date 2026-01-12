@@ -1,0 +1,1244 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial=1.0">
+    <title>VulnScanner Pro - Professional Vulnerability Assessment</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <script type="text/javascript" src="/eel.js"></script>
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --danger-color: #dc3545;
+            --warning-color: #fd7e14;
+            --success-color: #20c997;
+        }
+
+        body {
+            background: var(--primary-gradient);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
+        }
+
+        .main-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            margin: 20px auto;
+            padding: 0;
+            max-width: 1800px;
+        }
+
+        .header {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 40px;
+            border-radius: 20px 20px 0 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 0.5;
+            }
+
+            50% {
+                transform: scale(1.1);
+                opacity: 0.8;
+            }
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+            margin-bottom: 10px;
+        }
+
+        .nav-tabs {
+            background: #f8f9fa;
+            padding: 15px 15px 0 15px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .nav-tabs .nav-link {
+            color: #666;
+            font-weight: 600;
+            border: none;
+            padding: 15px 25px;
+            margin-right: 5px;
+            border-radius: 10px 10px 0 0;
+            transition: all 0.3s;
+        }
+
+        .nav-tabs .nav-link:hover {
+            background: #e9ecef;
+            color: #667eea;
+        }
+
+        .nav-tabs .nav-link.active {
+            background: white;
+            color: #667eea;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .content-area {
+            padding: 30px;
+        }
+
+        .scan-config-card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-control,
+        .form-select {
+            border-radius: 10px;
+            border: 2px solid #e0e0e0;
+            padding: 12px 15px;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+
+        .btn-primary {
+            background: var(--primary-gradient);
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .severity-critical {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.85rem;
+            display: inline-block;
+            box-shadow: 0 3px 10px rgba(220, 53, 69, 0.3);
+        }
+
+        .severity-high {
+            background: linear-gradient(135deg, #fd7e14 0%, #e8590c 100%);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.85rem;
+            display: inline-block;
+            box-shadow: 0 3px 10px rgba(253, 126, 20, 0.3);
+        }
+
+        .severity-medium {
+            background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
+            color: #000;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.85rem;
+            display: inline-block;
+            box-shadow: 0 3px 10px rgba(255, 193, 7, 0.3);
+        }
+
+        .severity-low {
+            background: linear-gradient(135deg, #20c997 0%, #1aa179 100%);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.85rem;
+            display: inline-block;
+            box-shadow: 0 3px 10px rgba(32, 201, 151, 0.3);
+        }
+
+        .stat-card {
+            background: var(--primary-gradient);
+            color: white;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s;
+            margin-bottom: 20px;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-card h2 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .stat-card p {
+            font-size: 1.1rem;
+            margin: 10px 0 0 0;
+            opacity: 0.9;
+        }
+
+        .vuln-card {
+            border-left: 5px solid #dc3545;
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+        }
+
+        .vuln-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .port-card {
+            border-left: 5px solid #667eea;
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            transition: all 0.3s;
+        }
+
+        .port-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 3px 10px rgba(102, 126, 234, 0.2);
+        }
+
+        .progress-container {
+            display: none;
+            text-align: center;
+            padding: 40px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+
+        .progress-container.active {
+            display: block;
+        }
+
+        .progress {
+            height: 30px;
+            border-radius: 15px;
+            background: #e9ecef;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            background: var(--primary-gradient);
+            transition: width 0.3s ease;
+            font-weight: 600;
+        }
+
+        .spinner-border {
+            width: 4rem;
+            height: 4rem;
+            border-width: 0.5rem;
+        }
+
+        .scan-history-item {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid #e0e0e0;
+        }
+
+        .scan-history-item:hover {
+            background: #f8f9fa;
+            border-color: #667eea;
+            transform: translateX(5px);
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            border-left: 5px solid #2196f3;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .warning-box {
+            background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+            border-left: 5px solid #ff9800;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .risk-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .risk-critical {
+            background: #dc3545;
+            color: white;
+        }
+
+        .risk-high {
+            background: #fd7e14;
+            color: white;
+        }
+
+        .risk-medium {
+            background: #ffc107;
+            color: #000;
+        }
+
+        .risk-low {
+            background: #20c997;
+            color: white;
+        }
+
+        .compliance-indicator {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .compliant {
+            background: #28a745;
+        }
+
+        .non-compliant {
+            background: #dc3545;
+        }
+
+        .export-buttons {
+            position: sticky;
+            bottom: 20px;
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.1);
+            margin-top: 30px;
+        }
+
+        table {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        th {
+            background: var(--primary-gradient);
+            color: white;
+            font-weight: 600;
+            padding: 15px;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .accordion-button {
+            background: var(--primary-gradient);
+            color: white;
+            font-weight: 600;
+        }
+
+        .accordion-button:not(.collapsed) {
+            background: var(--primary-gradient);
+            color: white;
+        }
+
+        .badge {
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        .chart-container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px 0;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="main-container">
+        <div class="header">
+            <div style="position: relative; z-index: 1;">
+                <h1><i class="bi bi-shield-lock-fill"></i> VulnScanner Pro</h1>
+                <p class="mb-0" style="font-size: 1.2rem;">Herramienta Profesional de Análisis de Vulnerabilidades y
+                    Pentesting</p>
+                <small style="opacity: 0.8;">Alternativa Open-Source a Nessus | Desarrollado con Python y Eel</small>
+            </div>
+        </div>
+
+        <ul class="nav nav-tabs" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active" data-bs-toggle="tab" href="#dashboard-tab">
+                    <i class="bi bi-speedometer2"></i> Panel
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" href="#scan-tab">
+                    <i class="bi bi-radar"></i> Nuevo Escaneo
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" href="#results-tab">
+                    <i class="bi bi-clipboard-data-fill"></i> Resultados
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" href="#compliance-tab">
+                    <i class="bi bi-check-circle-fill"></i> Cumplimiento
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" href="#history-tab">
+                    <i class="bi bi-clock-history"></i> Historial
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" href="#about-tab">
+                    <i class="bi bi-info-circle-fill"></i> Acerca de
+                </a>
+            </li>
+        </ul>
+
+        <div class="tab-content content-area">
+            <!-- Dashboard Tab -->
+            <div id="dashboard-tab" class="tab-pane fade show active">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h2><i class="bi bi-house-door-fill"></i> Resumen del Panel</h2>
+                        <p class="text-muted">Vista general de tu estado de seguridad</p>
+                    </div>
+                </div>
+
+                <div class="row" id="dashboardStats">
+                    <div class="col-md-12">
+                        <div class="info-box">
+                            <h5><i class="bi bi-lightbulb-fill"></i> Empezar</h5>
+                            <p>¡Bienvenido a VulnScanner Pro! Comienza creando un nuevo escaneo en la pestaña "Nuevo
+                                Escaneo" para evaluar la seguridad de tu red.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scan Tab -->
+            <div id="scan-tab" class="tab-pane fade">
+                <div class="row">
+                    <div class="col-lg-7">
+                        <div class="scan-config-card">
+                            <h3><i class="bi bi-gear-fill"></i> Configuración del Escaneo</h3>
+                            <hr>
+
+                            <div class="mb-4">
+                                <label class="form-label fw-bold">Objetivo (IP o Dominio)</label>
+                                <input type="text" class="form-control" id="target"
+                                    placeholder="192.168.1.1 o ejemplo.com">
+                                <small class="text-muted">Introduce el objetivo que deseas escanear</small>
+                            </div>
+
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold">Rango de Puertos</label>
+                                    <select class="form-select" id="portRangeSelect" onchange="updatePortRange()">
+                                        <option value="1-100">Escaneo Rápido (1-100)</option>
+                                        <option value="1-1000" selected>Estándar (1-1000)</option>
+                                        <option value="1-10000">Extendido (1-10000)</option>
+                                        <option value="1-65535">Completo (1-65535)</option>
+                                        <option value="custom">Rango Personalizado</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold">Tipo de Escaneo</label>
+                                    <select class="form-select" id="scanType">
+                                        <option value="tcp" selected>TCP Connect</option>
+                                        <option value="syn">SYN Scan</option>
+                                        <option value="stealth">Stealth Scan (Sigiloso)</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="mb-4" id="customPortRange" style="display: none;">
+                                <label class="form-label fw-bold">Rango Personalizado</label>
+                                <input type="text" class="form-control" id="customPorts" placeholder="1-65535">
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label fw-bold">Nivel de Escaneo</label>
+                                <select class="form-select" id="scanLevel">
+                                    <option value="quick">Rápido (Solo comprobaciones básicas)</option>
+                                    <option value="standard" selected>Estándar (Recomendado)</option>
+                                    <option value="full">Completo (Incluye pruebas de credenciales)</option>
+                                    <option value="comprehensive">Exhaustivo (Todas las pruebas)</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-4">
+                                <h5>Opciones de Escaneo</h5>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="detectOS" checked>
+                                    <label class="form-check-label" for="detectOS">
+                                        <i class="bi bi-laptop"></i> Detección de SO y Fingerprinting
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="vulnScan" checked>
+                                    <label class="form-check-label" for="vulnScan">
+                                        <i class="bi bi-bug-fill"></i> Análisis de Vulnerabilidades (Base de datos CVE)
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="sslCheck">
+                                    <label class="form-check-label" for="sslCheck">
+                                        <i class="bi bi-shield-check"></i> Análisis de Certificados SSL/TLS
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="complianceCheck">
+                                    <label class="form-check-label" for="complianceCheck">
+                                        <i class="bi bi-clipboard-check"></i> Verificación de Cumplimiento (PCI-DSS,
+                                        HIPAA, CIS)
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="webScan">
+                                    <label class="form-check-label" for="webScan">
+                                        <i class="bi bi-globe"></i> Escaneo de Vulnerabilidades Web (SQLi, XSS)
+                                    </label>
+                                </div>
+                            </div>
+
+                            <button class="btn btn-primary w-100 btn-lg" onclick="startComprehensiveScan()">
+                                <i class="bi bi-play-circle-fill"></i> Iniciar Escaneo Completo
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-5">
+                        <div class="info-box">
+                            <h5><i class="bi bi-info-circle-fill"></i> Información del Escaneo</h5>
+                            <p><strong>VulnScanner Pro</strong> realiza evaluaciones de seguridad integrales incluyendo:
+                            </p>
+                            <ul>
+                                <li>Escaneo avanzado de puertos con múltiples técnicas</li>
+                                <li>Detección de versiones de servicios y captura de banners</li>
+                                <li>Coincidencia con base de datos CVE para vulnerabilidades conocidas</li>
+                                <li>Referencias cruzadas de bases de datos de exploits</li>
+                                <li>Análisis de seguridad de configuración</li>
+                                <li>Pruebas de credenciales débiles</li>
+                                <li>Escaneo de vulnerabilidades en aplicaciones web</li>
+                                <li>Evaluación de seguridad SSL/TLS</li>
+                                <li>Fingerprinting y detección de SO</li>
+                                <li>Verificación de cumplimiento</li>
+                            </ul>
+                        </div>
+
+                        <div class="warning-box">
+                            <h5><i class="bi bi-exclamation-triangle-fill"></i> Advertencia Legal</h5>
+                            <p><strong>IMPORTANTE:</strong> Escanea solo sistemas de tu propiedad o para los que tengas
+                                permiso explícito.</p>
+                            <p>El escaneo no autorizado puede ser ilegal en tu jurisdicción. Asegúrate siempre de tener
+                                la autorización adecuada antes de realizar evaluaciones de seguridad.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="progress-container" id="scanProgress">
+                    <div class="spinner-border text-primary mb-3" role="status"></div>
+                    <h4 id="scanStatus">Iniciando escaneo...</h4>
+                    <p class="text-muted" id="scanSubStatus">Preparando análisis del objetivo</p>
+                    <div class="progress mt-3">
+                        <div class="progress-bar" id="progressBar" role="progressbar" style="width: 0%">0%</div>
+                    </div>
+                    <p class="mt-3 text-muted">Esto puede tardar varios minutos dependiendo de la configuración del
+                        escaneo</p>
+                </div>
+            </div>
+
+            <!-- Results Tab -->
+            <div id="results-tab" class="tab-pane fade">
+                <div id="scanResults">
+                    <div class="info-box">
+                        <h5><i class="bi bi-info-circle-fill"></i> No hay resultados disponibles</h5>
+                        <p>Inicia un nuevo escaneo para ver los resultados detallados aquí.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Compliance Tab -->
+            <div id="compliance-tab" class="tab-pane fade">
+                <div id="complianceResults">
+                    <div class="info-box">
+                        <h5><i class="bi bi-info-circle-fill"></i> Estado de Cumplimiento</h5>
+                        <p>Ejecuta un escaneo con "Verificación de Cumplimiento" habilitada para ver el análisis.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- History Tab -->
+            <div id="history-tab" class="tab-pane fade">
+                <h3><i class="bi bi-clock-history"></i> Historial de Escaneos</h3>
+                <p class="text-muted">Ver y analizar escaneos previos</p>
+                <hr>
+                <div id="historyList">
+                    <div class="info-box">
+                        <p class="mb-0">No se encontraron escaneos previos. Completa tu primer escaneo para que aparezca
+                            en el historial.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- About Tab -->
+            <div id="about-tab" class="tab-pane fade">
+                <div class="row">
+                    <div class="col-md-8">
+                        <h3><i class="bi bi-shield-check"></i> VulnScanner Pro</h3>
+                        <p class="lead">Herramienta Profesional de Análisis de Vulnerabilidades Open-Source</p>
+                        <hr>
+
+                        <h4>Características</h4>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <ul>
+                                    <li>Escaneo avanzado de puertos (TCP, SYN, Stealth)</li>
+                                    <li>Detección de versiones de servicios</li>
+                                    <li>Integración con base de datos CVE</li>
+                                    <li>Referencias cruzadas de exploits</li>
+                                    <li>Auditoría de configuración</li>
+                                    <li>Pruebas de credenciales débiles</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <ul>
+                                    <li>Escaneo de vulnerabilidades web</li>
+                                    <li>Análisis SSL/TLS</li>
+                                    <li>Fingerprinting de SO</li>
+                                    <li>Verificación de cumplimiento</li>
+                                    <li>Reportes profesionales (HTML, JSON, CSV)</li>
+                                    <li>Priorización de riesgos</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <h4 class="mt-4">Stack Tecnológico</h4>
+                        <p><strong>Backend:</strong> Python 3.x con framework Eel</p>
+                        <p><strong>Frontend:</strong> Bootstrap 5, JavaScript ES6+</p>
+                        <p><strong>Protocolos:</strong> TCP/IP, HTTP/HTTPS, SSL/TLS, SSH, FTP, SMTP, y más</p>
+
+                        <h4 class="mt-4">Detección de Vulnerabilidades</h4>
+                        <p>VulnScanner Pro incluye detección para:</p>
+                        <ul>
+                            <li>CVEs conocidos de los principales proveedores de software</li>
+                            <li>Malas configuraciones comunes</li>
+                            <li>Mecanismos de autenticación débiles</li>
+                            <li>Versiones de software desactualizadas</li>
+                            <li>Parches de seguridad faltantes</li>
+                            <li>Vulnerabilidades de aplicaciones web (SQLi, XSS, CSRF)</li>
+                            <li>Debilidades SSL/TLS</li>
+                            <li>Vulnerabilidades a nivel de protocolo</li>
+                        </ul>
+
+                        <div class="warning-box mt-4">
+                            <h5><i class="bi bi-code-square"></i> Open Source</h5>
+                            <p>Esta es una alternativa open-source a herramientas comerciales como Nessus, OpenVAS y
+                                Qualys.</p>
+                            <p>Perfecto para profesionales de seguridad, pentesters y administradores de red.</p>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="chart-container">
+                            <h5>Cobertura de Vulnerabilidades</h5>
+                            <ul class="list-unstyled">
+                                <li class="mb-2">✓ Servicios de Red</li>
+                                <li class="mb-2">✓ Aplicaciones Web</li>
+                                <li class="mb-2">✓ Bases de Datos</li>
+                                <li class="mb-2">✓ Sistemas Operativos</li>
+                                <li class="mb-2">✓ SSL/TLS</li>
+                                <li class="mb-2">✓ Autenticación</li>
+                                <li class="mb-2">✓ Configuración</li>
+                            </ul>
+                        </div>
+
+                        <div class="chart-container mt-3">
+                            <h5>Protocolos Soportados</h5>
+                            <div class="d-flex flex-wrap gap-2">
+                                <span class="badge bg-primary">HTTP/HTTPS</span>
+                                <span class="badge bg-primary">FTP/SFTP</span>
+                                <span class="badge bg-primary">SSH</span>
+                                <span class="badge bg-primary">Telnet</span>
+                                <span class="badge bg-primary">SMTP</span>
+                                <span class="badge bg-primary">POP3/IMAP</span>
+                                <span class="badge bg-primary">MySQL</span>
+                                <span class="badge bg-primary">PostgreSQL</span>
+                                <span class="badge bg-primary">MongoDB</span>
+                                <span class="badge bg-primary">Redis</span>
+                                <span class="badge bg-primary">SMB</span>
+                                <span class="badge bg-primary">RDP</span>
+                                <span class="badge bg-primary">VNC</span>
+                                <span class="badge bg-primary">DNS</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let currentScanResults = null;
+
+        eel.expose(update_scan_progress);
+        function update_scan_progress(progress) {
+            const progressBar = document.getElementById('progressBar');
+            if (progressBar) {
+                progressBar.style.width = `${progress}%`;
+                progressBar.textContent = `${progress}%`;
+            }
+        }
+
+        eel.expose(update_scan_status);
+        function update_scan_status(status) {
+            const scanStatus = document.getElementById('scanStatus');
+            if (scanStatus) {
+                scanStatus.textContent = status;
+            }
+        }
+
+        // Iniciar escaneo comprehensivo
+        async function startComprehensiveScan() {
+            const target = document.getElementById('target').value;
+
+            if (!target) {
+                alert('Por favor introduce una IP objetivo o dominio');
+                return;
+            }
+
+            const portRangeSelect = document.getElementById('portRangeSelect').value;
+            const portRange = portRangeSelect === 'custom' ?
+                document.getElementById('customPorts').value : portRangeSelect;
+
+            const options = {
+                port_range: portRange,
+                scan_type: document.getElementById('scanType').value,
+                scan_level: document.getElementById('scanLevel').value,
+                detect_os: document.getElementById('detectOS').checked,
+                vuln_scan: document.getElementById('vulnScan').checked,
+                ssl_check: document.getElementById('sslCheck').checked,
+                compliance_check: document.getElementById('complianceCheck').checked,
+                web_scan: document.getElementById('webScan').checked
+            };
+
+            // Mostrar progreso
+            document.getElementById('scanProgress').classList.add('active');
+
+            try {
+                const results = await eel.full_vulnerability_assessment(target, options)();
+                currentScanResults = results;
+
+                // Ocultar progreso
+                document.getElementById('scanProgress').classList.remove('active');
+
+                // Mostrar resultados
+                displayComprehensiveResults(results);
+                loadHistory();
+                updateDashboard();
+
+                // Cambiar a tab de resultados
+                const resultsTab = new bootstrap.Tab(document.querySelector('[href="#results-tab"]'));
+                resultsTab.show();
+            } catch (error) {
+                alert('Error during scan: ' + error);
+                document.getElementById('scanProgress').classList.remove('active');
+            }
+        }
+
+        // Mostrar resultados comprehensivos
+        function displayComprehensiveResults(results) {
+            const container = document.getElementById('scanResults');
+            const summary = results.summary || {};
+            const vulns = results.vulnerabilities || [];
+            const ports = results.ports || [];
+            const report = results.report || {};
+
+            let html = `
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h2><i class="bi bi-clipboard-check-fill"></i> Resultados del Escaneo</h2>
+                        <p class="text-muted mb-0">
+                            <strong>Objetivo:</strong> ${results.target} | 
+                            <strong>ID de Escaneo:</strong> ${results.scan_id} | 
+                            <strong>Fecha:</strong> ${new Date(results.timestamp).toLocaleString()}
+                        </p>
+                    </div>
+                    <div>
+                        <span class="risk-badge risk-${summary.overall_risk?.toLowerCase() || 'low'}">
+                            Riesgo ${summary.overall_risk === 'Critical' ? 'Crítico' :
+                    summary.overall_risk === 'High' ? 'Alto' :
+                        summary.overall_risk === 'Medium' ? 'Medio' : 'Bajo'}
+                        </span>
+                    </div>
+                </div>
+            `;
+
+            // Executive Summary Stats
+            html += `
+                <div class="row mb-4">
+                        <div class="stat-card" style="background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);">
+                            <h2>${summary.critical || 0}</h2>
+                            <p>Crítico</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card" style="background: linear-gradient(135deg, #fd7e14 0%, #e8590c 100%);">
+                            <h2>${summary.high || 0}</h2>
+                            <p>Alto</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card" style="background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);">
+                            <h2>${summary.medium || 0}</h2>
+                            <p>Medio</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card" style="background: linear-gradient(135deg, #20c997 0%, #1aa179 100%);">
+                            <h2>${summary.low || 0}</h2>
+                            <p>Bajo</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Risk Matrix
+            if (report.risk_matrix) {
+                html += `
+                    <div class="chart-container mb-4">
+                        <h3><i class="bi bi-graph-up"></i> Matriz de Riesgo</h3>
+                        <table class="table table-bordered mt-3">
+                            <thead>
+                                <tr>
+                                    <th>Categoría de Vulnerabilidad</th>
+                                    <th>Crítica</th>
+                                    <th>Alta</th>
+                                    <th>Media</th>
+                                    <th>Baja</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                `;
+
+                for (const [category, counts] of Object.entries(report.risk_matrix)) {
+                    const total = counts.Critical + counts.High + counts.Medium + counts.Low;
+                    html += `
+                        <tr>
+                            <td><strong>${category}</strong></td>
+                            <td><span class="badge bg-danger">${counts.Critical}</span></td>
+                            <td><span class="badge bg-warning">${counts.High}</span></td>
+                            <td><span class="badge" style="background: #ffc107;">${counts.Medium}</span></td>
+                            <td><span class="badge bg-success">${counts.Low}</span></td>
+                            <td><strong>${total}</strong></td>
+                        </tr>
+                    `;
+                }
+
+                html += `
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            }
+
+            // OS Detection
+            if (results.os_detection) {
+                html += `
+                    <div class="chart-container mb-4">
+                        <h3><i class="bi bi-hdd-network"></i> Detección de SO</h3>
+                        <div class="row mt-3">
+                            <div class="col-md-6">
+                                <p><strong>SO Detectado:</strong> ${results.os_detection.os}</p>
+                                <p><strong>Confianza:</strong> ${results.os_detection.confidence === 'High' ? 'Alta' :
+                        results.os_detection.confidence === 'Medium' ? 'Media' : 'Baja'}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>Detalles:</strong> ${JSON.stringify(results.os_detection.details)}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Open Ports
+            if (ports.length > 0) {
+                html += `
+                    <div class="chart-container mb-4">
+                        <h4><i class="bi bi-door-open-fill"></i> Puertos Abiertos y Servicios (${ports.length})</h4>
+                        <div class="row">
+                `;
+
+                ports.forEach(port => {
+                    html += `
+                        <div class="col-md-6 mb-2">
+                            <div class="port-card">
+                                <div class="d-flex justify-content-between">
+                                    <strong>Puerto ${port.port}</strong>
+                                    <span class="badge bg-success">${port.state}</span>
+                                </div>
+                                <small class="text-muted">Servicio: ${port.service}</small>
+                                ${port.version ? `<br><small class="text-muted">Versión: ${port.version}</small>` : ''}
+                                ${port.banner ? `<br><small class="text-muted" style="max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: block;">Banner: ${port.banner.substring(0, 80)}</small>` : ''}
+                            </div>
+                        </div>
+                    `;
+                });
+
+                html += `
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Vulnerabilities
+            if (vulns.length > 0) {
+                html += `
+                    <div class="chart-container mb-4">
+                        <h4><i class="bi bi-bug-fill"></i> Vulnerabilidades Detectadas (${vulns.length})</h4>
+                        <div class="accordion" id="vulnAccordion">
+                `;
+
+                vulns.forEach((vuln, index) => {
+                    html += `
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button ${index > 0 ? 'collapsed' : ''}" type="button" 
+                                        data-bs-toggle="collapse" data-bs-target="#vuln${index}">
+                                    <div class="d-flex justify-content-between w-100 align-items-center me-3">
+                                        <span>${vuln.vulnerability}</span>
+                                        <span class="severity-${vuln.severity.toLowerCase()}">${vuln.severity}</span>
+                                    </div>
+                                </button>
+                            </h2>
+                            <div id="vuln${index}" class="accordion-collapse collapse ${index === 0 ? 'show' : ''}" 
+                                 data-bs-parent="#vulnAccordion">
+                                <div class="accordion-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <p><strong>Tipo:</strong> ${vuln.type || 'N/A'}</p>
+                                            <p><strong>Puerto:</strong> ${vuln.port}</p>
+                                            <p><strong>Servicio:</strong> ${vuln.service || 'N/A'}</p>
+                                            ${vuln.version ? `<p><strong>Versión:</strong> ${vuln.version}</p>` : ''}
+                                            ${vuln.cve_id ? `<p><strong>ID CVE:</strong> <code>${vuln.cve_id}</code></p>` : ''}
+                                            ${vuln.cvss ? `<p><strong>Puntuación CVSS:</strong> <span class="badge bg-danger">${vuln.cvss}</span></p>` : ''}
+                                        </div>
+                                        <div class="col-md-6">
+                                            <p><strong>Descripción:</strong></p>
+                                            <p>${vuln.description}</p>
+                                            <p><strong>Recomendación:</strong></p>
+                                            <p class="text-primary">${vuln.recommendation}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                html += `
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Remediation Plan
+            if (report.remediation_plan && report.remediation_plan.length > 0) {
+                html += `
+                    <div class="chart-container mb-4">
+                        <h3><i class="bi bi-tools"></i> Plan de Remediación Prioritario</h3>
+                        <table class="table table-striped mt-3">
+                            <thead>
+                                <tr>
+                                    <th>Prioridad</th>
+                                    <th>Severidad</th>
+                                    <th>Problema</th>
+                                    <th>Acción Recomendada</th>
+                                    <th>Tiempo Estimado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                `;
+
+                report.remediation_plan.forEach(item => {
+                    html += `
+                        <tr>
+                            <td><span class="badge bg-primary">#${item.priority}</span></td>
+                            <td><span class="severity-${item.severity.toLowerCase()}">${item.severity}</span></td>
+                            <td>${item.issue}</td>
+                            <td>${item.action}</td>
+                            <td><small>${item.estimated_time}</small></td>
+                        </tr>
+                    `;
+                });
+
+                html += `
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            }
+
+            // Compliance
+            if (report.compliance_check) {
+                displayComplianceResults(report.compliance_check);
+            }
+
+            // Export Buttons
+            html += `
+                <div class="export-buttons">
+                    <h5><i class="bi bi-download"></i> Exportar Reportes</h5>
+                    <div class="btn-group" role="group">
+                        <button class="btn btn-primary" onclick="exportReport('json')">
+                            <i class="bi bi-filetype-json"></i> JSON
+                        </button>
+                        <button class="btn btn-success" onclick="exportReport('html')">
+                            <i class="bi bi-filetype-html"></i> HTML
+                        </button>
+                        <button class="btn btn-info" onclick="exportReport('csv')">
+                            <i class="bi bi-filetype-csv"></i> CSV
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            container.innerHTML = html;
+        }
+
+        // Mostrar compliance
+        function displayComplianceResults(compliance) {
+            const container = document.getElementById('complianceResults');
+
+            let html = `
+                <h3><i class="bi bi-check-circle-fill"></i> Análisis de Cumplimiento</h3>
+                <p class="text-muted">Resultados de verificación de estándares de seguridad</p>
+                <hr>
+            `;
+
+            for (const [standard, data] of Object.entries(compliance)) {
+                const statusClass = data.compliant ? 'compliant' : 'non-compliant';
+                const statusText = data.compliant ? 'Cumple' : 'No Cumple';
+
+                html += `
+                    <div class="chart-container mb-3">
+                        <h4>
+                            <span class="compliance-indicator ${statusClass}"></span>
+                            ${standard} - ${statusText}
+                        </h4>
+                `;
+
+                if (!data.compliant && data.issues.length > 0) {
+                    html += `
+                        <p><strong>Problemas Encontrados:</strong></p>
+                        <ul>
+                    `;
+                    data.issues.forEach(issue => {
+                        html += `<li>${issue}</li>`;
+                    });
+                    html += `</ul>`;
+                } else {
+                    html += `<p class="text-success">✓ Todos los chequeos pasaron</p>`;
+                }
+
+                html += `</div>`;
+            }
+
+            container.innerHTML = html;
+        }
+
+        // Cargar historial
+        async function loadHistory() {
+            const history = await eel.get_scan_history()();
+            const container = document.getElementById('historyList');
+
+            if (history.length === 0) {
+                container.innerHTML = `
+                    <div class="info-box">
+                        <p class="mb-0">No previous scans found</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            history.reverse().forEach(scan => {
+                const summary = scan.summary || {};
+                const statusClass = summary.overall_risk?.toLowerCase() || 'low';
+
+                html += `
+                    <div class="scan-history-item" onclick="loadScanResult('${scan.scan_id}')">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h5>${scan.target}</h5>
+                                <small class="text-muted">${new Date(scan.timestamp).toLocaleString()}</small>
+                            </div>
+                            <div class="text-end">
+                                <span class="risk-badge risk-${statusClass}">${summary.overall_risk || 'Unknown'}</span>
+                                <br>
+                                <small class="text-muted">${summary.total_vulnerabilities || 0} vulnerabilities</small>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // Cargar resultado de scan
+        async function loadScanResult(scanId) {
+            const history = await eel.get_scan_history()();
+            const scan = history.find(s => s.scan_id === scanId);
+
+            if (scan) {
+                currentScanResults = scan;
+                displayComprehensiveResults(scan);
+
+                if (scan.report && scan.report.compliance_check) {
+                    displayComplianceResults(scan.report.compliance_check);
+                }
+
+                const resultsTab = new bootstrap.Tab(document.querySelector('[href="#results-tab"]'));
+                resultsTab.show();
+            }
+        }
+
+        // Exportar reporte
+        async function exportReport(format) {
+            if (!currentScanResults) {
+                alert('No hay resultados para exportar');
+                return;
+            }
+
+            const result = await eel.export_report(currentScanResults.scan_id, format)();
+
+            if (result.success) {
+                const blob = new Blob([result.data], {
+                    type: format === 'json' ? 'application/json' :
+                        format === 'csv' ? 'text/csv' : 'text/html'
+                });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = result.filename;
+                a.click();
+                URL.revokeObjectURL(url);
+            } else {
+                alert('Error exporting: ' + result.error);
+            }
+        }
+
+        // Actualizar dashboard
+        function updateDashboard() {
+            const container = document.getElementById('dashboardStats');
+
+            if (!currentScanResults) return;
+
+            const summary = currentScanResults.summary || {};
+
+            container.innerHTML = `
+                <div class="col-md-3">
+                    <div class="stat-card" style="background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);">
+                        <h2>${summary.critical || 0}</h2>
+                        <p>Problemas Críticos</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-card" style="background: linear-gradient(135deg, #fd7e14 0%, #e8590c 100%);">
+                        <h2>${summary.high || 0}</h2>
+                        <p>Problemas Altos</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-card" style="background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);">
+                        <h2>${summary.medium || 0}</h2>
+                        <p>Problemas Medios</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-card" style="background: linear-gradient(135deg, #20c997 0%, #1aa179 100%);">
+                        <h2>${summary.low || 0}</h2>
+                        <p>Problemas Bajos</p>
+                    </div>
+                </div>
+                <div class="col-md-12 mt-4">
+                    <div class="chart-container">
+                        <h4>Resumen del Último Escaneo</h4>
+                        <p><strong>Objetivo:</strong> ${currentScanResults.target}</p>
+                        <p><strong>Fecha:</strong> ${new Date(currentScanResults.timestamp).toLocaleString()}</p>
+                        <p><strong>Riesgo General:</strong> <span class="risk-badge risk-${summary.overall_risk?.toLowerCase() || 'low'}">
+                              ${summary.overall_risk === 'Critical' ? 'Crítico' :
+                    summary.overall_risk === 'High' ? 'Alto' :
+                        summary.overall_risk === 'Medium' ? 'Medio' : 'Bajo'}
+                        </span></p>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Cargar al iniciar
+        window.addEventListener('load', () => {
+            loadHistory();
+        });
+    </script>
+</body>
+
+</html>
