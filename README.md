@@ -530,9 +530,9 @@ EL SOFTWARE SE PROPORCIONA "TAL CUAL", SIN GARANTÍA DE NINGÚN TIPO.
 
 ## 📞 Contacto
 
-- 📧 Email: vuln-scanner@example.com
-- 🌐 GitHub: github.com/vulnscanner
-- 💬 Discord: discord.gg/vulnscanner
+- 📧 Email: kebo.jcg77@gmail.com
+- 🌐 GitHub: github.com/KevinGil12C
+- 💬 Discord: pendiente
 
 ---
 
